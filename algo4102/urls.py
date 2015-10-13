@@ -15,7 +15,11 @@ Including another URLconf
 """
 from django.conf.urls import include, url
 from django.contrib import admin
+from . import views
 
 urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
+    url(r'^generateBoard/(\d+)/$', views.generateBoard, name='generateBoard'),
+    url(r'^createProblem', views.createProblem, name='createProblem'),
+    url(r'^', views.index, name='index'),
 ]

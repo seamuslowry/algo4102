@@ -1,0 +1,9 @@
+How what are the dimensions of your solution?<br>
+
+
+<form action="{% url 'generateBoard' 1%}" method="POST">
+	{% csrf_token %}
+	Length: <input name="length" type="number" min="1" /><br>
+	Width: <input name="width" type="number" min="1" /><br>
+	<input type="submit" value="Submit"/>
+</form>

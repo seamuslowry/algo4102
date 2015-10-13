@@ -1,0 +1,38 @@
+<head>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+</head>
+<body>
+Create Final Board:
+<div style="width:100%">
+	<form action="{% url 'createProblem' %}">
+		<table id="table1">
+			{% for r in lengthRange %}
+				<tr>
+				{% for c in widthRange %}
+					<td>
+						<input style="width:22px" name="table0_{{r}}_{{c}}" type="int"/>
+					</td>
+				{% endfor %}
+				</tr>
+			{% endfor %}
+		</table>
+	Create Pieces:<br>
+	{% for piece in piecesRange %}
+		Piece #{{piece}}:<br>
+		<table>
+			{% for r in lengthRange %}
+				<tr>
+				{% for c in widthRange %}
+					<td>
+						<input style="width:22px" name="table{{id}}_{{r}}_{{c}}" type="int"/>
+					</td>
+				{% endfor %}
+				</tr>
+			{% endfor %}
+		</table>
+	</form>
+	{% endfor %}
+	<input type="submit"/>
+</div>
+<a href="{% url 'generateBoard' pieces %}">Add Piece</a>
+</body>
