@@ -2,17 +2,19 @@ from django.shortcuts import render
 from .models import Board
 
 def index(request):
-	Board.objects.all().delete()
-	return render(request, 'index.html')
+	xnotiles1 = (9,10,11)
+	ynotiles1 = (0,1,2,3,4,5,6,15,16,17,18,19,20)
+	xnotiles2 = ynotiles1
+	ynotiles2 = xnotiles1
+	context = {('lengthRange',xrange(21)),('widthRange',xrange(21)),('xnotiles1',xnotiles1),('ynotiles1',ynotiles1),('xnotiles2',xnotiles2),('ynotiles2',ynotiles2)}
+	return render(request, 'index.html',context)
 
-def generateBoard(request, pieces):
-	if (request.method=="POST"):
-		p = Board(length=request.POST['length'],width=request.POST['width'])
-		p.save()
-	else:
-		p = Board.objects.all()[0]
-	context = {('lengthRange',xrange(int(p.length))),('widthRange',xrange(int(p.width))),('piecesRange',xrange(1,int(pieces)+1)),('pieces',int(pieces)+1)}
-	return render(request, 'generateBoard.html',context)
-
-def createProblem(request, pieces):
-	return render(request, 'index.html')
+def solve(request):
+	if request.method != "POST":
+		return "You shouldn't be here yet"
+	xnotiles1 = (9,10,11)
+	ynotiles1 = (0,1,2,3,4,5,6,15,16,17,18,19,20)
+	xnotiles2 = ynotiles1
+	ynotiles2 = xnotiles1
+	context = {('lengthRange',xrange(21)),('widthRange',xrange(21)),('xnotiles1',xnotiles1),('ynotiles1',ynotiles1),('xnotiles2',xnotiles2),('ynotiles2',ynotiles2)}
+	return render(request, 'solved.html',context)

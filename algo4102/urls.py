@@ -19,7 +19,6 @@ from . import views
 
 urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
-    url(r'^generateBoard/(\d+)/$', views.generateBoard, name='generateBoard'),
-    url(r'^createProblem', views.createProblem, name='createProblem'),
+    url(r'^solve/', views.solve, name='solve'),
     url(r'^', views.index, name='index'),
 ]

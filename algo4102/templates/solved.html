@@ -2,8 +2,6 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
 </head>
 <body>
-<form action="{% url 'solve' %}" method="POST">
-{% csrf_token %}
 <table name="board">
     {% for y in lengthRange %}
         <tr>
@@ -11,12 +9,11 @@
             {% if x in xnotiles1 and y in ynotiles1 or x in xnotiles2 and y in ynotiles2 %}
                 <td><div style="width:20px;height:20px"></div></td>
             {% else %}
-            <td><input style="width:20px;height:20px" type="int" name="r{{y}}c{{x}}"/></td>
+            <td><input style="width:20px;height:20px" type="int" name="r{{y}}c{{x}}" value="9"/></td>
             {% endif %}
         {% endfor %}
         </tr>
     {% endfor %}
 </table>
-<input type="submit" value="Submit"/>
-</form>
+
 </body>
