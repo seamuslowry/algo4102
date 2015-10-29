@@ -3,7 +3,7 @@ from .models import Board
 
 def index(request):
 	xnotiles1 = (9,10,11)
-	ynotiles1 = (0,1,2,3,4,5,6,15,16,17,18,19,20)
+	ynotiles1 = (0,1,2,3,4,5,15,16,17,18,19,20)
 	xnotiles2 = ynotiles1
 	ynotiles2 = xnotiles1
 	context = {('lengthRange',xrange(21)),('widthRange',xrange(21)),('xnotiles1',xnotiles1),('ynotiles1',ynotiles1),('xnotiles2',xnotiles2),('ynotiles2',ynotiles2)}
@@ -12,9 +12,30 @@ def index(request):
 def solve(request):
 	if request.method != "POST":
 		return "You shouldn't be here yet"
+	given = [[0 for x in range(21)] for x in range(21)]
+	answer = [[(x%10) for x in range(21)] for x in range(21)]
+
+
+	for i in request.POST:
+		if not i[0]=='c':
+			rc = i.split('-')
+			given[int(rc[0])][int(rc[1])]=request.POST[i]
+
+	#figure out the answer here
+
+
+
 	xnotiles1 = (9,10,11)
-	ynotiles1 = (0,1,2,3,4,5,6,15,16,17,18,19,20)
+	ynotiles1 = (0,1,2,3,4,5,15,16,17,18,19,20)
 	xnotiles2 = ynotiles1
 	ynotiles2 = xnotiles1
-	context = {('lengthRange',xrange(21)),('widthRange',xrange(21)),('xnotiles1',xnotiles1),('ynotiles1',ynotiles1),('xnotiles2',xnotiles2),('ynotiles2',ynotiles2)}
+	ansstr = two_d_list_to_string(given)
+	context = {('ansstr',ansstr),('lengthRange',xrange(21)),('widthRange',xrange(21)),('xnotiles1',xnotiles1),('ynotiles1',ynotiles1),('xnotiles2',xnotiles2),('ynotiles2',ynotiles2)}
 	return render(request, 'solved.html',context)
+
+def two_d_list_to_string(list):
+	ansstr = "test"
+	for row in list:
+		for col in row:
+			ansstr = ansstr + str(col)
+	return ansstr

@@ -1,3 +1,5 @@
+{% load mathfilters %}
+
 <head>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
 </head>
@@ -9,7 +11,9 @@
             {% if x in xnotiles1 and y in ynotiles1 or x in xnotiles2 and y in ynotiles2 %}
                 <td><div style="width:20px;height:20px"></div></td>
             {% else %}
-            <td><input style="width:20px;height:20px" type="int" name="r{{y}}c{{x}}" value="9"/></td>
+            {% with f=forloop.parentloop.counter0|mul:21|add:forloop.counter0|add:8 %}
+            <td><input style="width:20px;height:20px" type="int" name="r{{y}}c{{x}}" value="{{ansstr|truncatechars:f|slice:'-4:-3'}}"/></td>
+            {% endwith %}
             {% endif %}
         {% endfor %}
         </tr>
