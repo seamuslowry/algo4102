@@ -22,6 +22,11 @@ def solve(request):
 			given[int(rc[0])][int(rc[1])]=request.POST[i]
 
 	#figure out the answer here
+    #the array given should have exactly what was given on the previous screen
+    #blank boxes are represented as zeroes
+    #the array is a full square. they boxes that shouldn't exist
+    #also initialized to zeroes and should stay that way. or not. it shouldn't matter
+    #generous amounts of helper methods will likely be needed
 
 
 
