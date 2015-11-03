@@ -23,6 +23,8 @@ blank_board = [[ 0, 0, 0, 0, 0, 0, 0, 0, 0,-1,-1,-1, 0, 0, 0, 0, 0, 0, 0, 0, 0],
 			   [ 0, 0, 0, 0, 0, 0, 0, 0, 0,-1,-1,-1, 0, 0, 0, 0, 0, 0, 0, 0, 0],
 			   [ 0, 0, 0, 0, 0, 0, 0, 0, 0,-1,-1,-1, 0, 0, 0, 0, 0, 0, 0, 0, 0]]
 
+blank_ans_str = "test123xxxxxxxxxxxx123xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+
 def index(request):
 	xnotiles1 = (9,10,11)
 	ynotiles1 = (0,1,2,3,4,5,15,16,17,18,19,20)
@@ -41,7 +43,11 @@ def solve(request):
 	for i in request.POST:
 		if not i[0]=='c':
 			rc = i.split('-')
-			given[int(rc[0])][int(rc[1])]=request.POST[i]
+			if (request.POST[i]):
+				given[int(rc[0])][int(rc[1])]=request.POST[i]
+			else:
+				given[int(rc[0])][int(rc[1])]=0
+
 
 	#figure out the answer here
     #the array given should have exactly what was given on the previous screen
@@ -57,15 +63,19 @@ def solve(request):
 	xnotiles2 = ynotiles1
 	ynotiles2 = xnotiles1
 	ansstr = two_d_list_to_string(given)
+	print ansstr
 	context = {('ansstr',ansstr),('lengthRange',xrange(21)),('widthRange',xrange(21)),('xnotiles1',xnotiles1),('ynotiles1',ynotiles1),('xnotiles2',xnotiles2),('ynotiles2',ynotiles2)}
 	return render(request, 'solved.html',context)
 
 def two_d_list_to_string(list):
 	ansstr = "test"
+	print list
 	for row in list:
 		for col in row:
 			if col >= 0:
 				ansstr = ansstr + str(col)
+			elif col == 0:
+				ansstr = ansstr + "z"
 			else:
 				ansstr = ansstr + "x"
 	return ansstr

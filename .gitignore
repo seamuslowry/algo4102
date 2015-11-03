@@ -1,1 +1,17 @@
-*.pyc
+settings.ini
+static/netbadge
+__pycache__/
+*.py[cod]
+*$py.class
+*.log
+
+# ignore vim generated temporary / swap files
+*~
+*.swp
+*.swo
+
+# ignore dev sqlite3 database
+*.sqlite3
+
+# pesky app store files
+.DS_Store
