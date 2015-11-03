@@ -5,8 +5,15 @@
 <form action="{% url 'solve' %}" method="POST">
 {% csrf_token %}
 <table name="board">
+    <tr>
+    <td><div style="width:20px;height:20px"></div></td>
+    {% for d in lengthRange %}
+        <td><div style="text-align:center;width:20px;height:20px">{{d}}</div></td>
+    {% endfor %}    
+    </tr>
     {% for y in lengthRange %}
         <tr>
+        <td><div style="width:20px;height:0px"></div>{{y}}</td>
         {% for x in widthRange %}
             {% if x in xnotiles1 and y in ynotiles1 or x in xnotiles2 and y in ynotiles2 %}
                 <td><div style="width:20px;height:20px"></div></td>
