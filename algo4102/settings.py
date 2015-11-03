@@ -38,7 +38,6 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'algo4102',
-    'mathfilters',
 )
 
 MIDDLEWARE_CLASSES = (
