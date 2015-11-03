@@ -34,7 +34,7 @@ def index(request):
 def solve(request):
 	if request.method != "POST":
 		return "You shouldn't be here yet"
-	given = [[0 for x in range(21)] for x in range(21)]
+	given = blank_board
 	answer = [[(x%10) for x in range(21)] for x in range(21)]
 
 
@@ -56,7 +56,7 @@ def solve(request):
 	ynotiles1 = (0,1,2,3,4,5,15,16,17,18,19,20)
 	xnotiles2 = ynotiles1
 	ynotiles2 = xnotiles1
-	ansstr = two_d_list_to_string(blank_board)
+	ansstr = two_d_list_to_string(given)
 	context = {('ansstr',ansstr),('lengthRange',xrange(21)),('widthRange',xrange(21)),('xnotiles1',xnotiles1),('ynotiles1',ynotiles1),('xnotiles2',xnotiles2),('ynotiles2',ynotiles2)}
 	return render(request, 'solved.html',context)
 
