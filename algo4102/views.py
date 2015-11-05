@@ -62,6 +62,46 @@ def solve(request):
 	#also initialized to zeroes and should stay that way. or not. it shouldn't matter
 	#generous amounts of helper methods will likely be needed
 
+	# genreal algorithm
+	# Initialize 2D array with 81 empty grids (nx = 9, ny = 9)
+	# Fill in some empty grid with the known values
+	# Make an original copy of the array
+	# Start from top left grid (nx = 0, ny = 0), check if grid is empty
+	# if (grid is empty) {
+	#   assign the empty grid with values (i)
+	#   if (no numbers exists in same rows & same columns same as (i) & 3x3 square (i) is currently in)
+	#     fill in the number
+	#   if (numbers exists in same rows & same columns same as (i) & 3x3 square (i) is currently in)
+	#     discard (i) and repick other values (i++)
+	# }
+	# else {
+	#   while (nx < 9) {
+	#     Proceed to next row grid(nx++, ny)
+	#     if (nx equals 9) {
+	#       reset nx = 1
+	#       proceed to next column grid(nx,ny++)
+	#       if (ny equals 9) {
+	#         print solution
+	#       }
+	#     }
+	#   }
+	# }
+
+	# preliminary implementation
+
+	for nr in range(0,21):
+		for nc in range(0,21):
+			val = given[nr][nc]
+			if (val < 0):
+				continue
+			else:
+				i=1
+				while not valid_move(given,nr,nc,i): #simply returns true right now
+					i=i+1
+				given[nr][nc]=i
+
+
+
 	#please do not modiy below here in this method either
 	#everything is held together by spit and prayers
 
@@ -82,11 +122,10 @@ def two_d_list_to_string(list):
 	return ansstr
 
 def is_valid(r,c):
-	# print "c: " + str(c) + "in xnotiles1: " + str(c in xnotiles1)
-	# print "c: " + str(c) + "in xnotiles2: " + str(c in xnotiles2)
-	# print "r: " + str(r) + "in ynotiles1: " + str(r in xnotiles1)
-	# print "r: " + str(r) + "in ynotiles2: " + str(r in xnotiles2)
 	return not (c in xnotiles1 and r in ynotiles1 or c in xnotiles2 and r in ynotiles2)
+
+def valid_move(board,r,c,val):
+	return True
 
 def determine_boards_or_invalid(r,c):
 	if not is_valid(r,c):
