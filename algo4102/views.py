@@ -57,9 +57,11 @@ BOT_LEFT = 3
 BOT_RIGHT = 4
 NONE = -1
 
+ENDVAL=21
+
 def index(request):
 	context = {('lengthRange',xrange(21)),('widthRange',xrange(21)),('xnotiles1',xnotiles1),('ynotiles1',ynotiles1),('xnotiles2',xnotiles2),('ynotiles2',ynotiles2)}
-	return render(request, 'test_index.html',context)
+	return render(request, 'index.html',context)
 
 def solve(request):
 	if request.method != "POST":
@@ -70,30 +72,30 @@ def solve(request):
 
 
 	for i in request.POST:
-		if not i[0]=='c':
+		if not i[0]=='c' and not i[0]=='i':
 			rc = i.split('-')
 			r = int(rc[0])
 			c = int(rc[1])
 			if (request.POST[i]):
 				given[r][c]=int(request.POST[i])
-				sure[r][c]=True
+				if (given[r][c]!=0):
+					sure[r][c]=True
 			else:
 				given[r][c]=0
 
 
 	# preliminary implementation
 
-	endval=9
 	nr=0
 	nc=0
 
 	prog = True
 	f = open('test.txt', 'w')
 	f.truncate()
-	while nr < endval and nc < endval:
+	f.write(str_2d_array(given))
+	while nr < ENDVAL and nc < ENDVAL:
 		val = given[nr][nc]
 		print str(nr) + ", " + str(nc)
-		f.write(str_2d_array(given))
 		if sure[nr][nc]:
 			if prog:
 				#PROGRESS
@@ -135,13 +137,13 @@ def solve(request):
 	return render(request, 'solved.html',context)
 
 def progress(nr,nc):
-	nr=nr+(nc+1)//9
-	nc=(nc+1)%9
+	nr=nr+(nc+1)//ENDVAL
+	nc=(nc+1)%ENDVAL
 	return (nr,nc)
 def regress(nr,nc):
 	if (nc == 0):
 		nr = nr - 1
-		nc = 8
+		nc = ENDVAL-1
 	else:
 		nc = nc - 1
 	return(nr,nc)
@@ -158,9 +160,9 @@ def str_2d_array(board):
 	for r in board:
 		for c in r:
 			if len(str(c)) == 1:
-				ret = ret + str(c) + " "
+				ret =  ret + "  " + str(c)
 			else:
-				ret = ret + str(c)
+				ret = ret + " " + str(c)
 		ret = ret + "\n"
 	ret = ret +"\n\n\n\n\n"
 	return ret
@@ -182,7 +184,7 @@ def is_valid(r,c):
 
 def valid_move(board,r,c,val):
 	bi_s = determine_boards_or_invalid(r,c)
-	final_validity = val <= 9 and val >=1
+	final_validity = val <= ENDVAL and val >=1
 	if -1 in bi_s:
 		return False
 	for bi in bi_s:
