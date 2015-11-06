@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from .models import Board
+from copy import copy, deepcopy
 
 blank_board = [[ 0, 0, 0, 0, 0, 0, 0, 0, 0,-1,-1,-1, 0, 0, 0, 0, 0, 0, 0, 0, 0],
 			   [ 0, 0, 0, 0, 0, 0, 0, 0, 0,-1,-1,-1, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -66,8 +67,8 @@ def index(request):
 def solve(request):
 	if request.method != "POST":
 		return "You shouldn't be here yet"
-	given = blank_board
-	sure = blank_sure_board
+	given = deepcopy(blank_board)
+	sure = deepcopy(blank_sure_board)
 	answer = [[(x%10) for x in range(21)] for x in range(21)]
 
 
