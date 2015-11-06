@@ -94,8 +94,9 @@ def solve(request):
 	f.truncate()
 	f.write(str_2d_array(given))
 	while nr < ENDVAL and nc < ENDVAL:
+		if nr < 0 or nc < 0:
+			return "No solution"
 		val = given[nr][nc]
-		print str(nr) + ", " + str(nc)
 		if sure[nr][nc]:
 			if prog:
 				#PROGRESS
