@@ -97,6 +97,7 @@ def solve(request):
 	while nr < ENDVAL and nc < ENDVAL:
 		if nr < 0 or nc < 0:
 			return "No solution"
+		print str(nr) + ", " + str(nc) +":"+str(sure[nr][nc])
 		val = given[nr][nc]
 		if sure[nr][nc]:
 			if prog:
@@ -110,6 +111,8 @@ def solve(request):
 				nr = tog[0]
 				nc = tog[1]
 		else:
+			if nr == 20 and nc > 18:
+				print str(sure[nr][nc]) + " what the fuck"
 			something_found = False
 			for i in range(val+1,10):
 				if valid_move(given,nr,nc,i):
@@ -129,11 +132,10 @@ def solve(request):
 				tog = regress(nr,nc)
 				nr = tog[0]
 				nc = tog[1]
-
-	#print_2d_array(given)
+	print_2d_array(given)
 	#please do not modiy below here in this method either
 	#everything is held together by spit and prayers
-
+	
 	ansstr = two_d_list_to_string(given)
 	context = {('ansstr',ansstr),('lengthRange',xrange(21)),('widthRange',xrange(21)),('xnotiles1',xnotiles1),('ynotiles1',ynotiles1),('xnotiles2',xnotiles2),('ynotiles2',ynotiles2)}
 	return render(request, 'solved.html',context)
@@ -179,6 +181,7 @@ def two_d_list_to_string(list):
 				ansstr = ansstr + "z"
 			else:
 				ansstr = ansstr + "x"
+	ansstr = ansstr + "three"
 	return ansstr
 
 def is_valid(r,c):
