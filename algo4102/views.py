@@ -2,7 +2,7 @@ from django.shortcuts import render,redirect
 from django.contrib import messages
 from .models import Board
 from copy import copy, deepcopy
-
+from time import clock
 
 # 2D array to represent a blank board
 blank_board = [[ 0, 0, 0, 0, 0, 0, 0, 0, 0,-1,-1,-1, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -93,7 +93,7 @@ def solve(request):
             else:
                 given[r][c]=0
 
-
+    start = clock()
     # solution algorithm using backtracking
     nr=0   # current row
     nc=0   # current column
@@ -163,9 +163,11 @@ def solve(request):
                 nr = tog[0]
                 nc = tog[1]
 
+    end = clock()
+
     # due to contraints of django, the answer is passed as a string and later parsed    
     ansstr = two_d_list_to_string(given)
-    context = {('ansstr',ansstr),('lengthRange',xrange(21)),('widthRange',xrange(21)),('xnotiles1',xnotiles1),('ynotiles1',ynotiles1),('xnotiles2',xnotiles2),('ynotiles2',ynotiles2)}
+    context = {('elapsed_time',end-start),('ansstr',ansstr),('lengthRange',xrange(21)),('widthRange',xrange(21)),('xnotiles1',xnotiles1),('ynotiles1',ynotiles1),('xnotiles2',xnotiles2),('ynotiles2',ynotiles2)}
     return render(request, 'solved.html',context)
 
 #compute nr and nc for a progression; return the tuple of the new (nr,nc)
