@@ -1,4 +1,5 @@
-from django.shortcuts import render
+from django.shortcuts import render,redirect
+from django.contrib import messages
 from .models import Board
 from copy import copy, deepcopy
 
@@ -74,7 +75,7 @@ def index(request):
 # solve and display solution
 def solve(request):
     if request.method != "POST":
-        return "You shouldn't be here yet"
+        return redirect('index')
     # copy above boards b/c python will not allow constants
     given = deepcopy(blank_board)
     sure = deepcopy(blank_sure_board)
@@ -101,7 +102,10 @@ def solve(request):
     while nr < ENDVAL and nc < ENDVAL:
         # if we backtrack past the start, there is no solution
         if nr < 0 or nc < 0:
-            return "No solution"
+            messages.add_message(
+                request,messages.INFO,
+                "No solution to previous puzzle. Try again.")
+            return redirect('index')
         val = given[nr][nc]
 
         # if the grid we are on is one of the constraints
