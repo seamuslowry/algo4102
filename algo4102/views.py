@@ -79,7 +79,6 @@ def solve(request):
     # copy above boards b/c python will not allow constants
     given = deepcopy(blank_board)
     sure = deepcopy(blank_sure_board)
-
     # parse input fields; do not take irrelvant POST fields
     for i in request.POST:
         if not i[0]=='c' and not i[0]=='i':
@@ -98,8 +97,24 @@ def solve(request):
     nr=0   # current row
     nc=0   # current column
 
+    for r in range(0,ENDVAL):
+        for c in range(0,ENDVAL):
+            bi_s = determine_boards_or_invalid(r,c)
+            for bi in bi_s:
+                if bi == -1:
+                    continue;
+                b = get_board(given, bi)
+                newr = convert_r_for_board(bi,r)
+                newc = convert_c_for_board(bi,c)
+                if sure[r][c] and is_valid(r,c) and not valid_move(b,newr,newc,given[r][c]):
+                    messages.add_message(
+                        request,messages.INFO,
+                        "No solution to previous puzzle. Try again.")
+                    return redirect('index')
+
     prog = True    #True is should progress; False if backtracking
     while nr < ENDVAL and nc < ENDVAL:
+        print str(nr) + ", " + str(nc)
         # if we backtrack past the start, there is no solution
         if nr < 0 or nc < 0:
             messages.add_message(
@@ -114,6 +129,11 @@ def solve(request):
         # go backwards if we are regressing
 
         if sure[nr][nc]:
+            if is_valid(nr,nc) and not valid_move(given,nr,nc,val):
+                messages.add_message(
+                    request,messages.INFO,
+                    "No solution to previous puzzle. Try again.")
+                return redirect('index')
             if prog:
                 #PROGRESS
                 tog = progress(nr,nc)
@@ -226,6 +246,7 @@ def is_valid(r,c):
 # determine if the move is valid on the board; this is the larger board
 def valid_move(board,r,c,val):
     # first, detemrine which board(s) the tile is on
+    board[r][c]=0
     bi_s = determine_boards_or_invalid(r,c)
     # ensure the value falls within the accepted range
     final_validity = val <= 9 and val >=1
@@ -269,6 +290,12 @@ def convert_c_for_board(board_index,c):
 # validate for a 9x9 board
 # row, column, and block must all be valid
 def reg_val(board,r,c,val):
+    # print str(r) + ", " + str(c) + " with " + str(val) + ": all " + str(reg_row_val(board,r,val) and reg_col_val(board,c,val) and reg_blk_val(board,r,c,val)),
+    # print str(r) + ", " + str(c) + " with " + str(val) + ": row " + str(reg_row_val(board,r,val)),
+    # print str(r) + ", " + str(c) + " with " + str(val) + ": col " + str(reg_col_val(board,c,val)),
+    # print str(r) + ", " + str(c) + " with " + str(val) + ": blk " + str(reg_blk_val(board,r,c,val)),
+    # print
+    # print
     return reg_row_val(board,r,val) and reg_col_val(board,c,val) and reg_blk_val(board,r,c,val)
 
 # return true if move is valid within the row
