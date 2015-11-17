@@ -98,6 +98,20 @@ def solve(request):
     nr=0   # current row
     nc=0   # current column
 
+    single_contraints = True
+    while single_contraints:
+        single_contraints=False
+        for r in range(ENDVAL):
+            for c in range(ENDVAL):
+                tmp=[]
+                for val in range(10):
+                    if not sure[r][c] and valid_move(given,r,c,val):
+                        tmp.append(val)
+                if len(tmp)==1:
+                    single_contraints=True
+                    given[r][c]=tmp[0]
+                    sure[r][c]=True
+
     prog = True    #True is should progress; False if backtracking
     while nr < ENDVAL and nc < ENDVAL:
         # if we backtrack past the start, there is no solution
