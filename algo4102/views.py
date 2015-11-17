@@ -5,7 +5,29 @@ from copy import copy, deepcopy
 from time import clock
 
 # 2D array to represent a blank board
-blank_board = [[ 0, 0, 0, 0, 0, 0, 0, 0, 0,-1,-1,-1, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+blank_board = [[ [], [], [], [], [], [], [], [], [],[-1],[-1],[-1], [], [], [], [], [], [], [], [], []],
+               [ [], [], [], [], [], [], [], [], [],[-1],[-1],[-1], [], [], [], [], [], [], [], [], []],
+               [ [], [], [], [], [], [], [], [], [],[-1],[-1],[-1], [], [], [], [], [], [], [], [], []],
+               [ [], [], [], [], [], [], [], [], [],[-1],[-1],[-1], [], [], [], [], [], [], [], [], []],
+               [ [], [], [], [], [], [], [], [], [],[-1],[-1],[-1], [], [], [], [], [], [], [], [], []],
+               [ [], [], [], [], [], [], [], [], [],[-1],[-1],[-1], [], [], [], [], [], [], [], [], []],
+               [ [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], []],
+               [ [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], []],
+               [ [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], []],
+               [[-1],[-1],[-1],[-1],[-1],[-1], [], [], [], [], [], [], [], [], [],[-1],[-1],[-1],[-1],[-1],[-1]],
+               [[-1],[-1],[-1],[-1],[-1],[-1], [], [], [], [], [], [], [], [], [],[-1],[-1],[-1],[-1],[-1],[-1]],
+               [[-1],[-1],[-1],[-1],[-1],[-1], [], [], [], [], [], [], [], [], [],[-1],[-1],[-1],[-1],[-1],[-1]],
+               [ [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], []],
+               [ [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], []],
+               [ [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], []],
+               [ [], [], [], [], [], [], [], [], [],[-1],[-1],[-1], [], [], [], [], [], [], [], [], []],
+               [ [], [], [], [], [], [], [], [], [],[-1],[-1],[-1], [], [], [], [], [], [], [], [], []],
+               [ [], [], [], [], [], [], [], [], [],[-1],[-1],[-1], [], [], [], [], [], [], [], [], []],
+               [ [], [], [], [], [], [], [], [], [],[-1],[-1],[-1], [], [], [], [], [], [], [], [], []],
+               [ [], [], [], [], [], [], [], [], [],[-1],[-1],[-1], [], [], [], [], [], [], [], [], []],
+               [ [], [], [], [], [], [], [], [], [],[-1],[-1],[-1], [], [], [], [], [], [], [], [], []]]
+
+empty_final = [[ 0, 0, 0, 0, 0, 0, 0, 0, 0,-1,-1,-1, 0, 0, 0, 0, 0, 0, 0, 0, 0],
                [ 0, 0, 0, 0, 0, 0, 0, 0, 0,-1,-1,-1, 0, 0, 0, 0, 0, 0, 0, 0, 0],
                [ 0, 0, 0, 0, 0, 0, 0, 0, 0,-1,-1,-1, 0, 0, 0, 0, 0, 0, 0, 0, 0],
                [ 0, 0, 0, 0, 0, 0, 0, 0, 0,-1,-1,-1, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -26,29 +48,6 @@ blank_board = [[ 0, 0, 0, 0, 0, 0, 0, 0, 0,-1,-1,-1, 0, 0, 0, 0, 0, 0, 0, 0, 0],
                [ 0, 0, 0, 0, 0, 0, 0, 0, 0,-1,-1,-1, 0, 0, 0, 0, 0, 0, 0, 0, 0],
                [ 0, 0, 0, 0, 0, 0, 0, 0, 0,-1,-1,-1, 0, 0, 0, 0, 0, 0, 0, 0, 0],
                [ 0, 0, 0, 0, 0, 0, 0, 0, 0,-1,-1,-1, 0, 0, 0, 0, 0, 0, 0, 0, 0]]
-
-# 2D array used to keep track of which cell can or cannot be changed
-blank_sure_board = [[ False, False, False, False, False, False, False, False, False, True , True , True , False, False, False, False, False, False, False, False, False],
-               [ False, False, False, False, False, False, False, False, False, True , True , True , False, False, False, False, False, False, False, False, False],
-               [ False, False, False, False, False, False, False, False, False, True , True , True , False, False, False, False, False, False, False, False, False],
-               [ False, False, False, False, False, False, False, False, False, True , True , True , False, False, False, False, False, False, False, False, False],
-               [ False, False, False, False, False, False, False, False, False, True , True , True , False, False, False, False, False, False, False, False, False],
-               [ False, False, False, False, False, False, False, False, False, True , True , True , False, False, False, False, False, False, False, False, False],
-               [ False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False],
-               [ False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False],
-               [ False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False],
-               [ True , True , True , True , True , True , False, False, False, False, False, False, False, False, False, True , True , True , True , True , True ],
-               [ True , True , True , True , True , True , False, False, False, False, False, False, False, False, False, True , True , True , True , True , True ],
-               [ True , True , True , True , True , True , False, False, False, False, False, False, False, False, False, True , True , True , True , True , True ],
-               [ False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False],
-               [ False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False],
-               [ False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False],
-               [ False, False, False, False, False, False, False, False, False, True , True , True , False, False, False, False, False, False, False, False, False],
-               [ False, False, False, False, False, False, False, False, False, True , True , True , False, False, False, False, False, False, False, False, False],
-               [ False, False, False, False, False, False, False, False, False, True , True , True , False, False, False, False, False, False, False, False, False],
-               [ False, False, False, False, False, False, False, False, False, True , True , True , False, False, False, False, False, False, False, False, False],
-               [ False, False, False, False, False, False, False, False, False, True , True , True , False, False, False, False, False, False, False, False, False],
-               [ False, False, False, False, False, False, False, False, False, True , True , True , False, False, False, False, False, False, False, False, False]]
 
 # for rendering in webpage; know which tiles not to show
 xnotiles1 = (9,10,11)
@@ -78,7 +77,7 @@ def solve(request):
         return redirect('index')
     # copy above boards b/c python will not allow constants
     given = deepcopy(blank_board)
-    sure = deepcopy(blank_sure_board)
+    final_board = deepcopy(empty_final)
 
     # parse input fields; do not take irrelvant POST fields
     for i in request.POST:
@@ -87,30 +86,41 @@ def solve(request):
             r = int(rc[0])
             c = int(rc[1])
             if (request.POST[i]):
-                given[r][c]=int(request.POST[i])
-                if (given[r][c]!=0):
-                    sure[r][c]=True
+                given[r][c]=[int(request.POST[i])]
+                final_board[r][c]=int(request.POST[i])
             else:
-                given[r][c]=0
+                given[r][c]=[]
+                final_board[r][c]=0
 
     start = clock()
     # solution algorithm using backtracking
     nr=0   # current row
     nc=0   # current column
 
-    single_contraints = True
-    while single_contraints:
-        single_contraints=False
-        for r in range(ENDVAL):
-            for c in range(ENDVAL):
-                tmp=[]
-                for val in range(10):
-                    if not sure[r][c] and valid_move(given,r,c,val):
-                        tmp.append(val)
+    # for r in range(ENDVAL):
+    #     for c in range(ENDVAL):
+    #         val = final_board[r][c]
+    #         if is_valid(r,c) and val>0 and not valid_move(final_board,r,c,val):
+    #             messages.add_message(
+    #                 request,messages.INFO,
+    #                 "No solution to previous puzzle. Your constraints are invalid at " +str(r) +", " +str(c) + ". Try again.")
+    #             return redirect('index')                                
+
+    for r in range(ENDVAL):
+        for c in range(ENDVAL):
+            tmp=[]
+            for val in range(10):
+                if valid_move(final_board,r,c,val):
+                    tmp.append(val)
+            if len(tmp)==0 and not len(given[r][c])==1:
+                messages.add_message(
+                    request,messages.INFO,
+                    "No solution to previous puzzle. Tile (" + str(r) + ", " + str(c) + ") has no possible values." + " Try again.")
+                return redirect('index')                
+            if (not len(given[r][c])==1):
+                given[r][c]=deepcopy(tmp)
                 if len(tmp)==1:
-                    single_contraints=True
-                    given[r][c]=tmp[0]
-                    sure[r][c]=True
+                    final_board[r][c]=tmp[0]
 
     prog = True    #True is should progress; False if backtracking
     while nr < ENDVAL and nc < ENDVAL:
@@ -118,16 +128,15 @@ def solve(request):
         if nr < 0 or nc < 0:
             messages.add_message(
                 request,messages.INFO,
-                "No solution to previous puzzle. Try again.")
+                "No solution to previous puzzle. We have gone back before the start of the board. Try again.")
             return redirect('index')
-        val = given[nr][nc]
 
         # if the grid we are on is one of the constraints
         # simply pass it
         # go forward if we are progressing
         # go backwards if we are regressing
 
-        if sure[nr][nc]:
+        if len(given[nr][nc])==1:
             if prog:
                 #PROGRESS
                 tog = progress(nr,nc)
@@ -145,7 +154,17 @@ def solve(request):
             something_found = False # True if grid is validly filled
             # empty values are represented as 0s
             # begin at val+1 and check through 9 for a valid value
-            for i in range(val+1,10):
+            currentVal = final_board[nr][nc]
+            if currentVal==0:
+                possVals = given[nr][nc]
+            else:
+                possVals = given[nr][nc][given[nr][nc].index(currentVal)+1:]
+            if (index == (len(given[nr][nc])-1)):
+                messages.add_message(
+                    request,messages.INFO,
+                    "No solution to previous puzzle. All branches have been shown invalid. Try again.")
+                return redirect('index')
+            for i in possVals:
 
                 # if we find a valid move
                 # then we set the algorithm to progress
@@ -153,9 +172,9 @@ def solve(request):
                 # record that something was found
                 # stop searching
 
-                if valid_move(given,nr,nc,i):
+                if valid_move(final_board,nr,nc,i):
                     prog = True
-                    given[nr][nc]=i
+                    final_board[nr][nc]=i
                     something_found=True
                     break
 
@@ -171,7 +190,7 @@ def solve(request):
                 nc = tog[1]
             else:
                 prog = False
-                given[nr][nc]=0
+                final_board[nr][nc]=0
                 #REGRESS
                 tog = regress(nr,nc)
                 nr = tog[0]
@@ -180,7 +199,7 @@ def solve(request):
     end = clock()
 
     # due to contraints of django, the answer is passed as a string and later parsed    
-    ansstr = two_d_list_to_string(given)
+    ansstr = two_d_list_to_string(final_board)
     context = {('elapsed_time',end-start),('ansstr',ansstr),('lengthRange',xrange(21)),('widthRange',xrange(21)),('xnotiles1',xnotiles1),('ynotiles1',ynotiles1),('xnotiles2',xnotiles2),('ynotiles2',ynotiles2)}
     return render(request, 'solved.html',context)
 
@@ -239,6 +258,8 @@ def is_valid(r,c):
 
 # determine if the move is valid on the board; this is the larger board
 def valid_move(board,r,c,val):
+    # tmp_board = deepcopy(board)
+    # tmp_board[r][c]=0
     # first, detemrine which board(s) the tile is on
     bi_s = determine_boards_or_invalid(r,c)
     # ensure the value falls within the accepted range
