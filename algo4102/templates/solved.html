@@ -19,7 +19,7 @@
                 <td><div style="width:20px;height:20px"></div></td>
             {% else %}
             {% with f=forloop.parentloop.counter0|mul:21|add:forloop.counter0|add:8 %}
-            <td><input style="width:20px;height:20px" type="int" name="r{{y}}c{{x}}" value="{{ansstr|truncatechars:f|slice:'-4:-3'}}"/></td>
+            <td><input style="width:20px;height:20px" type="int" name="r{{y}}c{{x}}" value="{{ansstr|truncatechars:f|slice:'-4:-3'}}" disabled /></td>
             {% endwith %}
             {% endif %}
         {% endfor %}
@@ -27,4 +27,7 @@
     {% endfor %}
 </table>
 
+<p>Elapsed time: {{elapsed_time}} seconds</p>
+
+<a href="{% url 'index' %}">Try again</a>
 </body>

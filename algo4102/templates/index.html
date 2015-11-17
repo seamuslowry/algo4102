@@ -28,6 +28,15 @@
 <input type="submit" value="Submit"/>
 </form>
 
+{% if messages %}
+    <ul class="list-group">
+        {% for message in messages %}
+            <li{% if message.tags %} class="list-group-item list-group-item-info"{% endif %}>{{ message }}</li>
+        {% endfor %}
+    </ul>
+{% endif %}
+
+
 </body>
 
 <script>
