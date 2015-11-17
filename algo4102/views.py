@@ -97,30 +97,33 @@ def solve(request):
     nr=0   # current row
     nc=0   # current column
 
-    # for r in range(ENDVAL):
-    #     for c in range(ENDVAL):
-    #         val = final_board[r][c]
-    #         if is_valid(r,c) and val>0 and not valid_move(final_board,r,c,val):
-    #             messages.add_message(
-    #                 request,messages.INFO,
-    #                 "No solution to previous puzzle. Your constraints are invalid at " +str(r) +", " +str(c) + ". Try again.")
-    #             return redirect('index')                                
-
     for r in range(ENDVAL):
         for c in range(ENDVAL):
-            tmp=[]
-            for val in range(10):
-                if valid_move(final_board,r,c,val):
-                    tmp.append(val)
-            if len(tmp)==0 and not len(given[r][c])==1:
+            val = final_board[r][c]
+            if is_valid(r,c) and val>0 and not valid_move(final_board,r,c,val):
                 messages.add_message(
                     request,messages.INFO,
-                    "No solution to previous puzzle. Tile (" + str(r) + ", " + str(c) + ") has no possible values." + " Try again.")
-                return redirect('index')                
-            if (not len(given[r][c])==1):
-                given[r][c]=deepcopy(tmp)
-                if len(tmp)==1:
-                    final_board[r][c]=tmp[0]
+                    "No solution to previous puzzle. Your constraints are invalid at " +str(r) +", " +str(c) + ". Try again.")
+                return redirect('index')                                
+    single_constraints=True
+    while single_constraints:
+        single_constraints=False
+        for r in range(ENDVAL):
+            for c in range(ENDVAL):
+                tmp=[]
+                for val in range(10):
+                    if valid_move(final_board,r,c,val):
+                        tmp.append(val)
+                if len(tmp)==0 and not given[r][c]==[-1]:
+                    messages.add_message(
+                        request,messages.INFO,
+                        "No solution to previous puzzle. Tile (" + str(r) + ", " + str(c) + ") has no possible values." + " Try again.")
+                    return redirect('index')                
+                if (not len(given[r][c])==1):
+                    given[r][c]=deepcopy(tmp)
+                    if len(tmp)==1:
+                        final_board[r][c]=tmp[0]
+                        single_constraints=True
 
     prog = True    #True is should progress; False if backtracking
     while nr < ENDVAL and nc < ENDVAL:
@@ -304,16 +307,23 @@ def convert_c_for_board(board_index,c):
 # validate for a 9x9 board
 # row, column, and block must all be valid
 def reg_val(board,r,c,val):
-    return reg_row_val(board,r,val) and reg_col_val(board,c,val) and reg_blk_val(board,r,c,val)
+    return reg_row_val(board,r,c,val) and reg_col_val(board,r,c,val) and reg_blk_val(board,r,c,val)
 
 # return true if move is valid within the row
-def reg_row_val(board,r,val):
-    return val not in board[r]
+def reg_row_val(board,r,c,val):
+    itr = range(9)
+    itr.remove(c)
+    for col in itr:
+        if board[r][col] == val:
+            return False
+    return True
 
 # return true if move is valid within the column
-def reg_col_val(board,c,val):
-    for r in range(9):
-        if board[r][c]==val:
+def reg_col_val(board,r,c,val):
+    itr = range(9)
+    itr.remove(r)
+    for row in itr:
+        if board[row][c]==val:
             return False;
     return True
 
@@ -323,6 +333,8 @@ def reg_blk_val(board,r,c,val):
     base_c = c//3*3
     for test_r in range(base_r,base_r+3):
         for test_c in range(base_c,base_c+3):
+            if test_r == r and test_c == c:
+                continue
             if board[test_r][test_c]==val:
                 return False
     return True
