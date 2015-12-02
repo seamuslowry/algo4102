@@ -111,7 +111,7 @@ def solve(request):
         for r in range(ENDVAL):
             for c in range(ENDVAL):
                 tmp=[]
-                for val in range(10):
+                for val in range(1,10):
                     if valid_move(final_board,r,c,val):
                         tmp.append(val)
                 if len(tmp)==0 and not given[r][c]==[-1]:
@@ -124,6 +124,14 @@ def solve(request):
                     if len(tmp)==1:
                         final_board[r][c]=tmp[0]
                         single_constraints=True
+        for r in range(ENDVAL):
+            for c in range(ENDVAL):
+                for val in range(1,10):
+                    if not len(given[r][c])==1 and other_block_tiles_invalid_large_board(given,r,c,val):
+                        given[r][c] = [val]
+                        final_board[r][c]=val
+                        single_constraints=True
+                        break
 
     prog = True    #True is should progress; False if backtracking
     while nr < ENDVAL and nc < ENDVAL:
@@ -258,6 +266,34 @@ def two_d_list_to_string(list):
 # determine if the tile is valid (tile, not move)
 def is_valid(r,c):
     return not (c in xnotiles1 and r in ynotiles1 or c in xnotiles2 and r in ynotiles2)
+
+#return True if val CANNOT go in any other rows/cols of that block
+def other_block_tiles_invalid_small_board(board,r,c,val):
+    base_r = r//3*3
+    base_c = c//3*3
+    final_validity=True
+    for test_r in range(base_r,base_r+3):
+        for test_c in range(base_c,base_c+3):
+            if test_r == r and test_c == c:
+                continue
+            final_validity = final_validity and val not in board[test_r][test_c]
+    return final_validity
+
+def other_block_tiles_invalid_large_board(board,r,c,val):
+    bi_s = determine_boards_or_invalid(r,c)
+    final_validity = True
+    if -1 in bi_s:
+        return False
+    for bi in bi_s:
+        # get the smaller 9x9 board
+        b = get_board(board, bi)
+        # get the normalized (0-9) indices for the new board
+        newr = convert_r_for_board(bi,r)
+        newc = convert_c_for_board(bi,c)
+        # determine if the move is valid for that board
+        # logical AND all the validities together; move must be valid for all
+        final_validity = final_validity and other_block_tiles_invalid_small_board(b,newr,newc,val)
+    return final_validity
 
 # determine if the move is valid on the board; this is the larger board
 def valid_move(board,r,c,val):
