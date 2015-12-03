@@ -1,0 +1,13 @@
+{% load mathfilters %}
+
+<head>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+</head>
+<body>
+
+please view console output for answer
+
+<p>Elapsed time: {{elapsed_time}} seconds</p>
+
+<a href="{% url 'standard' 9 %}">Try again</a>
+</body>

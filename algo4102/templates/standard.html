@@ -1,0 +1,82 @@
+<head>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+</head>
+<body>
+
+Enter the length/width of the square:<input id="sq" type="number" value="{{num}}"/><br>
+Must be a perfect square.
+
+
+<form action="{% url 'solve_standard' num%}" method="POST">
+{% csrf_token %}
+<table name="board">
+    <tr>
+    <td><div style="width:20px;height:20px"></div></td>
+    {% for d in lengthRange %}
+        <td><div style="text-align:center;width:20px;height:20px">{{d}}</div></td>
+    {% endfor %}    
+    </tr>
+    {% for y in lengthRange %}
+        <tr>
+        <td><div style="width:20px;height:0px"></div>{{y}}</td>
+        {% for x in widthRange %}
+            <td><input style="width:20px;height:20px" type="int" id="{{y}}-{{x}}" name="{{y}}-{{x}}"/></td>
+        {% endfor %}
+        </tr>
+    {% endfor %}
+</table>
+<input type="file" id="inputFile" name="inputFile"/><br><br>
+<input type="submit" value="Submit"/>
+</form>
+
+{% if messages %}
+    <ul class="list-group">
+        {% for message in messages %}
+            <li{% if message.tags %} class="list-group-item list-group-item-info"{% endif %}>{{ message }}</li>
+        {% endfor %}
+    </ul>
+{% endif %}
+
+
+</body>
+
+<script>
+  function handleFileSelect(evt) {
+    var f = document.getElementById('inputFile').files[0]; // FileList object
+    // files is a FileList of File objects. List some properties.
+    var reader = new FileReader();
+    reader.onload = function(e){
+        var lines = reader.result.trim().split("\n")
+        i = 0;
+        for (i=0; i < lines.length; i++){
+            j = 0
+            var chars = lines[i].trim().split(/\s+/);
+            for (j=0; j < chars.length; j++){
+                if(chars[j]==0){
+                    continue;
+                }
+                try {
+                    inp = document.getElementById(i+"-"+j)
+                    inp.value = chars[j]
+                }
+                catch(err){
+
+                }
+            }
+        }
+    }
+    reader.readAsText(f)
+  }
+  document.getElementById('inputFile').addEventListener('change', handleFileSelect, false);
+
+    $('#sq').blur(function() { 
+        var sq = $(this).val()
+        var root = Math.sqrt(sq)
+        if (root%1!==0){
+            alert("Needs to be a perfect square")
+            return;
+        }
+        window.location.href = "http://localhost:8000/standard/"+sq;
+    });
+
+</script>

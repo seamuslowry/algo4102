@@ -3,6 +3,8 @@ from django.contrib import messages
 from .models import Board
 from copy import copy, deepcopy
 from time import clock
+import pprint
+import math
 
 # 2D array to represent a blank board
 blank_board = [[ [], [], [], [], [], [], [], [], [],[-1],[-1],[-1], [], [], [], [], [], [], [], [], []],
@@ -70,6 +72,154 @@ ENDVAL=21
 def index(request):
     context = {('lengthRange',xrange(21)),('widthRange',xrange(21)),('xnotiles1',xnotiles1),('ynotiles1',ynotiles1),('xnotiles2',xnotiles2),('ynotiles2',ynotiles2)}
     return render(request, 'index.html',context)
+
+def standard(request, num):
+    context = {('num',num),('lengthRange',xrange(int(num))),('widthRange',xrange(int(num)))}
+    return render(request, 'standard.html',context)    
+
+def solve_standard(request, num):
+    n = int(num)
+    st_given = [[[] for j in xrange(n)] for i in xrange(n)]
+    st_final = [[0 for j in xrange(n)] for i in xrange(n)]
+    # parse input fields; do not take irrelvant POST fields
+    for i in request.POST:
+        if not i[0]=='c' and not i[0]=='i':
+            rc = i.split('-')
+            r = int(rc[0])
+            c = int(rc[1])
+            if (request.POST[i]):
+                st_given[r][c]=[int(request.POST[i])]
+                st_final[r][c]=int(request.POST[i])
+            else:
+                st_given[r][c]=[]
+                st_final[r][c]=0
+
+    start = clock()
+    # solution algorithm using backtracking
+    nr=0   # current row
+    nc=0   # current column
+    ENDVAL = n
+    for r in range(ENDVAL):
+        for c in range(ENDVAL):
+            val = st_final[r][c]
+            if st_reg_val(st_final,r,c,val,n):
+                messages.add_message(
+                    request,messages.INFO,
+                    "No solution to previous puzzle. Your constraints are invalid at " +str(r) +", " +str(c) + ". Try again.")
+                return redirect('index')                                
+    single_constraints=True
+    while single_constraints:
+        single_constraints=False
+        for r in range(ENDVAL):
+            for c in range(ENDVAL):
+                tmp=[]
+                for val in range(1,ENDVAL+1):
+                    if st_reg_val(st_final,r,c,val,n):
+                        tmp.append(val)
+                if len(tmp)==0:
+                    messages.add_message(
+                        request,messages.INFO,
+                        "No solution to previous puzzle. Tile (" + str(r) + ", " + str(c) + ") has no possible values." + " Try again.")
+                    return redirect('index')                
+                if (not len(st_given[r][c])==1):
+                    st_given[r][c]=deepcopy(tmp)
+                    if len(tmp)==1:
+                        st_final[r][c]=tmp[0]
+                        single_constraints=True
+        for r in range(ENDVAL):
+            for c in range(ENDVAL):
+                for val in range(1,n):
+                    if not len(st_given[r][c])==1 and st_other_block_tiles_invalid_small_board(st_given,r,c,val,n):
+                        st_given[r][c] = [val]
+                        st_final[r][c]=val
+                        single_constraints=True
+                        break
+
+    prog = True    #True is should progress; False if backtracking
+    while nr < ENDVAL and nc < ENDVAL:
+        # if we backtrack past the start, there is no solution
+        if nr < 0 or nc < 0:
+            messages.add_message(
+                request,messages.INFO,
+                "No solution to previous puzzle. We have gone back before the start of the board. Try again.")
+            return redirect('index')
+
+       # print str(nr) + " " + str(nc) + str(prog)
+
+        # if the grid we are on is one of the constraints
+        # simply pass it
+        # go forward if we are progressing
+        # go backwards if we are regressing
+
+        if len(st_given[nr][nc])==1:
+            if prog:
+                #PROGRESS
+                tog = st_progress(nr,nc,n)
+                nr = tog[0]
+                nc = tog[1]
+            else:
+                # REGRESS
+                tog = st_regress(nr,nc,n)
+                nr = tog[0]
+                nc = tog[1]
+
+        # if the grid is not one of the constraints
+
+        else:
+            something_found = False # True if grid is validly filled
+            # empty values are represented as 0s
+            # begin at val+1 and check through 9 for a valid value
+            currentVal = st_final[nr][nc]
+            if currentVal==0:
+                possVals = st_given[nr][nc]
+            else:
+                possVals = st_given[nr][nc][st_given[nr][nc].index(currentVal)+1:]
+            if (index == (len(st_given[nr][nc])-1)):
+                messages.add_message(
+                    request,messages.INFO,
+                    "No solution to previous puzzle. All branches have been shown invalid. Try again.")
+                return redirect('index')
+            for i in possVals:
+
+                # if we find a valid move
+                # then we set the algorithm to progress
+                # DO the valid move
+                # record that something was found
+                # stop searching
+
+                if st_reg_val(st_final,nr,nc,i,n):
+                    prog = True
+                    st_final[nr][nc]=i
+                    something_found=True
+                    break
+
+            # if a valid move was completed
+            # progress
+            # otherwise
+            # regress/backtrack
+
+            if something_found:
+                #PROGRESS
+                tog = st_progress(nr,nc,n)
+                nr = tog[0]
+                nc = tog[1]
+            else:
+                prog = False
+                st_final[nr][nc]=0
+                #REGRESS
+                tog = st_regress(nr,nc,n)
+                nr = tog[0]
+                nc = tog[1]
+
+    end = clock()
+
+    # due to contraints of django, the answer is passed as a string and later parsed    
+
+    pprint.pprint(st_final)
+    context = {('num',n),('elapsed_time',end-start),('lengthRange',xrange(n)),('widthRange',xrange(n))}
+
+    return render(request, 'solve_standard.html',context)
+
 
 # solve and display solution
 def solve(request):
@@ -214,6 +364,20 @@ def solve(request):
     context = {('elapsed_time',end-start),('ansstr',ansstr),('lengthRange',xrange(21)),('widthRange',xrange(21)),('xnotiles1',xnotiles1),('ynotiles1',ynotiles1),('xnotiles2',xnotiles2),('ynotiles2',ynotiles2)}
     return render(request, 'solved.html',context)
 
+
+def st_progress(nr, nc, dim):
+    nr=nr+(nc+1)//dim
+    nc=(nc+1)%dim
+    return (nr,nc)
+
+def st_regress(nr,nc,dim):
+    if (nc == 0):
+        nr = nr - 1
+        nc = dim-1
+    else:
+        nc = nc - 1
+    return(nr,nc)
+
 #compute nr and nc for a progression; return the tuple of the new (nr,nc)
 def progress(nr,nc):
     nr=nr+(nc+1)//ENDVAL
@@ -266,6 +430,20 @@ def two_d_list_to_string(list):
 # determine if the tile is valid (tile, not move)
 def is_valid(r,c):
     return not (c in xnotiles1 and r in ynotiles1 or c in xnotiles2 and r in ynotiles2)
+
+#return True if val CANNOT go in any other rows/cols of that block
+def st_other_block_tiles_invalid_small_board(board,r,c,val,dim):
+    root = int(math.sqrt(dim))
+    base_r = r//root*root
+    base_c = c//root*root
+    final_validity=True
+    for test_r in range(base_r,base_r+root):
+        for test_c in range(base_c,base_c+root):
+            if test_r == r and test_c == c:
+                continue
+            final_validity = final_validity and val not in board[test_r][test_c]
+    return final_validity
+
 
 #return True if val CANNOT go in any other rows/cols of that block
 def other_block_tiles_invalid_small_board(board,r,c,val):
@@ -340,6 +518,41 @@ def convert_c_for_board(board_index,c):
     }
     return c - c_offset.get(board_index,0)
 
+
+def st_reg_val(board,r,c,val,dim):
+    return st_reg_row_val(board,r,c,val,dim) and st_reg_col_val(board,r,c,val,dim) and st_reg_blk_val(board,r,c,val,dim)
+
+# return true if move is valid within the row
+def st_reg_row_val(board,r,c,val,dim):
+    itr = range(dim)
+    itr.remove(c)
+    for col in itr:
+        if board[r][col] == val:
+            return False
+    return True
+
+# return true if move is valid within the column
+def st_reg_col_val(board,r,c,val,dim):
+    itr = range(dim)
+    itr.remove(r)
+    for row in itr:
+        if board[row][c]==val:
+            return False;
+    return True
+
+# return true if move is valid with the block
+def st_reg_blk_val(board,r,c,val,dim):
+    root = int(math.sqrt(dim))
+    base_r = r//root*root
+    base_c = c//root*root
+    for test_r in range(base_r,base_r+root):
+        for test_c in range(base_c,base_c+root):
+            if test_r == r and test_c == c:
+                continue
+            if board[test_r][test_c]==val:
+                return False
+    return True
+
 # validate for a 9x9 board
 # row, column, and block must all be valid
 def reg_val(board,r,c,val):
@@ -347,7 +560,7 @@ def reg_val(board,r,c,val):
 
 # return true if move is valid within the row
 def reg_row_val(board,r,c,val):
-    itr = range(9)
+    itr = range(ENDVAL)
     itr.remove(c)
     for col in itr:
         if board[r][col] == val:
@@ -356,7 +569,7 @@ def reg_row_val(board,r,c,val):
 
 # return true if move is valid within the column
 def reg_col_val(board,r,c,val):
-    itr = range(9)
+    itr = range(ENDVAL)
     itr.remove(r)
     for row in itr:
         if board[row][c]==val:
