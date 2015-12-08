@@ -2,6 +2,9 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
 </head>
 <body>
+<a href="{%url 'standard' 9%}">Solve a standard 9x9</a><br>
+<a href="{%url 'standard' 16%}">Solve a standard 16x16</a><br>
+<a href="{%url 'standard' 25%}">Solve a standard 25x25</a><br>
 <form action="{% url 'solve' %}" method="POST">
 {% csrf_token %}
 <table name="board">

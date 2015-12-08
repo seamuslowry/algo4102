@@ -3,8 +3,6 @@
 </head>
 <body>
 
-Enter the length/width of the square:<input id="sq" type="number" value="{{num}}"/><br>
-Must be a perfect square.
 
 
 <form action="{% url 'solve_standard' num%}" method="POST">
@@ -25,7 +23,6 @@ Must be a perfect square.
         </tr>
     {% endfor %}
 </table>
-<input type="file" id="inputFile" name="inputFile"/><br><br>
 <input type="submit" value="Submit"/>
 </form>
 
@@ -71,6 +68,7 @@ Must be a perfect square.
 
     $('#sq').blur(function() { 
         var sq = $(this).val()
+        alert(sq)
         var root = Math.sqrt(sq)
         if (root%1!==0){
             alert("Needs to be a perfect square")

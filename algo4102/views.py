@@ -74,6 +74,8 @@ def index(request):
     return render(request, 'index.html',context)
 
 def standard(request, num):
+    if (math.sqrt(int(num))%1!=0):
+        num = 9
     context = {('num',num),('lengthRange',xrange(int(num))),('widthRange',xrange(int(num)))}
     return render(request, 'standard.html',context)    
 
@@ -102,7 +104,7 @@ def solve_standard(request, num):
     for r in range(ENDVAL):
         for c in range(ENDVAL):
             val = st_final[r][c]
-            if st_reg_val(st_final,r,c,val,n):
+            if val>0 and not st_reg_val(st_final,r,c,val,n):
                 messages.add_message(
                     request,messages.INFO,
                     "No solution to previous puzzle. Your constraints are invalid at " +str(r) +", " +str(c) + ". Try again.")
@@ -229,6 +231,7 @@ def solve(request):
     given = deepcopy(blank_board)
     final_board = deepcopy(empty_final)
 
+
     # parse input fields; do not take irrelvant POST fields
     for i in request.POST:
         if not i[0]=='c' and not i[0]=='i':
@@ -260,6 +263,7 @@ def solve(request):
         single_constraints=False
         for r in range(ENDVAL):
             for c in range(ENDVAL):
+                print str(r) + " " + str(c)
                 tmp=[]
                 for val in range(1,10):
                     if valid_move(final_board,r,c,val):
@@ -560,7 +564,7 @@ def reg_val(board,r,c,val):
 
 # return true if move is valid within the row
 def reg_row_val(board,r,c,val):
-    itr = range(ENDVAL)
+    itr = range(9)
     itr.remove(c)
     for col in itr:
         if board[r][col] == val:
@@ -569,7 +573,7 @@ def reg_row_val(board,r,c,val):
 
 # return true if move is valid within the column
 def reg_col_val(board,r,c,val):
-    itr = range(ENDVAL)
+    itr = range(9)
     itr.remove(r)
     for row in itr:
         if board[row][c]==val:
