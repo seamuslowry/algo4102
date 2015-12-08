@@ -180,7 +180,7 @@ def solve_standard(request, num):
             if (len(possVals)==0):
                 messages.add_message(
                     request,messages.INFO,
-                    "No solution to previous puzzle. All branches have been shown invalid. Try again. " + str(clock()-start)) + " seconds taken."
+                    "No solution to previous puzzle. All branches have been shown invalid. Try again. " + str(clock()-start) + " seconds taken.")
                 return redirect('index')
             for i in possVals:
 
