@@ -139,6 +139,7 @@ def solve_standard(request, num):
 
     prog = True    #True is should progress; False if backtracking
     while nr < ENDVAL and nc < ENDVAL:
+        print str(nr) + ", " + str(nc)
         # if we backtrack past the start, there is no solution
         if nr < 0 or nc < 0:
             messages.add_message(
@@ -176,10 +177,10 @@ def solve_standard(request, num):
                 possVals = st_given[nr][nc]
             else:
                 possVals = st_given[nr][nc][st_given[nr][nc].index(currentVal)+1:]
-            if (index == (len(st_given[nr][nc])-1)):
+            if (len(possVals)==0):
                 messages.add_message(
                     request,messages.INFO,
-                    "No solution to previous puzzle. All branches have been shown invalid. Try again.")
+                    "No solution to previous puzzle. All branches have been shown invalid. Try again. " + str(clock()-start)) + " seconds taken."
                 return redirect('index')
             for i in possVals:
 
@@ -320,11 +321,12 @@ def solve(request):
             # empty values are represented as 0s
             # begin at val+1 and check through 9 for a valid value
             currentVal = final_board[nr][nc]
+            index = 0
             if currentVal==0:
                 possVals = given[nr][nc]
             else:
                 possVals = given[nr][nc][given[nr][nc].index(currentVal)+1:]
-            if (index == (len(given[nr][nc])-1)):
+            if (0 == len(possVals)):
                 messages.add_message(
                     request,messages.INFO,
                     "No solution to previous puzzle. All branches have been shown invalid. Try again.")
